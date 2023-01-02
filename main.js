@@ -2,33 +2,33 @@
 
 // Получить случайное число от 0 до size-1
 
-var getRandomNumber = function (size) {
+const getRandomNumber = function (size) {
     return Math.floor(Math.random() * size);
 };
 
 // Вычисляем расстояние от клика до клада
 
-var getDistance = function (event, target) {
-    var diffX = event.offsetX - target.x;
-    var diffY = event.offsetY - target.y;
+const getDistance = function (event, target) {
+    const diffX = event.offsetX - target.x;
+    const diffY = event.offsetY - target.y;
     return Math.sqrt((diffX * diffX) + (diffY * diffY));
 };
 
 // Сообщаем игроку, насколько он близок к цели
 // Получить для расстояния строку подсказки
 
-var getDistanceHint = function (distance) {
-    if (distance < 10) {
+const getDistanceHint = function (distance) {
+    if (distance < width / 100 * 3) {
         return "Обожжешься!";
-    } else if (distance < 20) {
+    } else if (distance < width / 100 * 5) {
         return "Очень горячо!";
-    } else if (distance < 40) {
+    } else if (distance < width / 100 * 10) {
         return "Горячо";
-    } else if (distance < 80) {
+    } else if (distance < width / 100 * 20) {
         return "Тепло";
-    } else if (distance < 160) {
+    } else if (distance < width / 100 * 40) {
         return "Холодно";
-    } else if (distance < 320) {
+    } else if (distance < width / 100 * 80) {
         return "Очень холодно";
     } else {
         return "Замерзнешь";
@@ -37,56 +37,66 @@ var getDistanceHint = function (distance) {
 
 // Создаем переменные
 
-var width = 400;
-var height = 400;
+const map = document.querySelector('#map'),
+      restClicks = document.querySelector('#restclicks'),
+      finDistance = document.querySelector('#distance'),
+      crosshairs = document.querySelector('#crosshairs'),
+      heading = document.querySelector('#heading'),
+      restart = document.querySelector('button');
+
+const width = map.getAttribute('width'),
+      height = map.getAttribute('height'),
+      clickAttempt = 25;
 
 // Подсчет кликов
 
-var clicks = 0;
+let clicks = 0;
 
 // Выбор случайного места для клада
 
-var target = {
+const target = {
     x: getRandomNumber(width),
     y: getRandomNumber(height)
 };
 
-var clickAttempt = 25;
-
 // Обработчик кликов
 
-$("#map").click(function (event) {
+map.addEventListener('click', (event) => {
     // Здесь будет код обработчика
     clicks++;
 
     if (clicks < clickAttempt) {
         // Получаем расстояние от места клика до клада
-        var distance = getDistance(event, target);
+        let distance = getDistance(event, target);
         // Преобразуем расстояние в подсказку
-        var distanceHint = getDistanceHint(distance);
+        let distanceHint = getDistanceHint(distance);
         // Записываем в элемент #distance новую подсказку
         switch (distanceHint) {
+            case "Очень холодно":
+            case "Замерзнешь":
             case "Холодно":
             case "Тепло":
             case "Горячо":
             case "Очень горячо!":
-                $("#restclicks").text("Осталось попыток " + (clickAttempt - clicks));
+                restClicks.textContent = `Осталось попыток ${clickAttempt - clicks}`;
                 break;
-        };
-        $("#distance").text(distanceHint);
+        }
+        finDistance.textContent = distanceHint;
     
         // Если клик был достаточно близко, поздравляем с победой
-        if (distance < 8) {
+        if (distance < width / 100 * 2) {
             // Перемещение укзателя мышки
-            $("#crosshairs").offset({
-                        left: target.x,
-                        top: target.y
-                    });
-            $("#heading").text("Клад найден! Сделано попыток: " + clicks);
-            // alert("Клад найден! Сделано попыток: " + clicks);
-           
-        };
+            crosshairs.style.left = `${target.x}px`;
+            crosshairs.style.top = `${target.y}px`;
+         
+            heading.textContent = `Клад найден! Сделано попыток: ${clicks}`;
+            heading.style.color = 'rgb(255, 127, 80)';
+            finDistance.textContent = '';
+            // alert("Клад найден! Сделано попыток: " + clicks);  
+        }
     } else {
         alert("КОНЕЦ ИГРЫ!");
-    };
+    }
 });
+
+restart.addEventListener('click', () => document.location.reload());
