@@ -15,7 +15,7 @@ You **lose** if the number of attempts is over and the treasure is not found.
 ## Screenshot
 ___
 
-![screenshot](../%D0%98%D0%B3%D1%80%D0%B0%20%D0%9A%D0%BB%D0%B0%D0%B4/img/screenshot.png)
+![screenshot](https://github.com/AndreyLuchko/treasure-game/tree/main/img/screenshot.png)
 
 ## Built With
 ___
